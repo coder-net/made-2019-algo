@@ -4,37 +4,36 @@
 
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <map>
 
 
 size_t bfs(const std::vector<std::vector<size_t>>& list, size_t start, size_t end) {
-  std::queue<size_t> queue;
+  std::map<size_t, size_t> queue;
   std::vector<bool> visited(list.size(), false);
-  queue.push(start);
-  size_t path_counter = 0;
-  while (path_counter == 0 && !queue.empty()) {
-    std::queue<size_t> temp;
-    while (!queue.empty()) {
-      size_t curr = queue.front();
-      queue.pop();
+  queue[start] = 1;
+
+  while (!queue.empty()) {
+    std::map<size_t, size_t> temp;
+
+    for (auto p : queue) {
+      size_t curr = p.first;
 
       if (curr == end) {
-        ++path_counter;
-        continue;
+        return p.second;
       }
 
-      if (visited[curr]) {
-        continue;
-      }
-      visited[curr] = true;
+      visited[p.first] = true;
 
       for (size_t child : list[curr]) {
-        temp.push(child);
+        if (!visited[child])
+          temp[child] += p.second;
       }
     }
+
+    queue.clear();
     queue = temp;
   }
-  return path_counter;
+  return 0;
 }
 
 
